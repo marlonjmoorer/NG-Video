@@ -1,0 +1,51 @@
+<div class="row">
+  <div class="col-xs-12">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="active"><a data-toggle="tab" href="#videos">Videos</a></li>
+      <li><a data-toggle="tab" href="#podcast">Podcast</a></li>
+    </ul>
+    <div class="tab-content">
+      <div id="videos" class="tab-pane fade in active">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <a [routerLink]="['upload']" [queryParams]="{ id: channel._id }">upload a video.</a>
+              </div>
+              <div class="panel-body">
+                <div *ngIf="this.hasVideos; else noVideos">
+                  <div *ngFor="let v of videos">
+                    <img [src]='v.thumb' width="75" height="75" /> <br>
+                    <a routerLink="/video/{{v.id}}">{{v.title}}</a>
+                  </div>
+                </div>
+                <ng-template #noVideos>
+                  <p>No videos. To add content, <a [routerLink]="['upload']" [queryParams]="{ id: channel._id }">upload a video.</a></p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="podcast" class="tab-pane fade">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+              </div>
+              <div class="panel-body">
+                <div *ngIf="this.hasVideos; else noPodcast">
+
+                </div>
+                <ng-template #noPodcast>
+                  <p>No Podcast</p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

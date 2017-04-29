@@ -1,0 +1,38 @@
+<div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+
+      <div class="row">
+        {{message}}
+        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+          <div class="form-group">
+            <img [src]="url" [hidden]="!hasUrl" class="img-responsive" width="150" height="150">
+            <label class="btn btn-primary" for="thumbnail">
+              <input id="thumbnail" accept="image/png,image/jpeg" (change)="imageChangeEvent($event)" type="file" style="display:none;">
+              Choose Image
+            </label>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+          <div class="form-group">
+            <input class="form-control" type="file" accept="video/mp4 ,video/quicktime,audio/mpeg3" (change)="fileChangeEvent($event)"
+            />
+          </div>
+          <form action="">
+            <input type="radio" [(ngModel)]="type" name="type" value="podcast">Podcast<br>
+            <input type="radio" [(ngModel)]="type" name="type" value="video">Video
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer text-center">
+      <button class="btn btn-primary " (click)="upload()">Upload</button>
+    </div>
+  </div>
+</div>

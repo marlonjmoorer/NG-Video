@@ -1,0 +1,8 @@
+<p>
+  RecentVideos works!
+</p>
+<div>
+  <div *ngFor="let v of recentVideos">
+    <a routerLink="/video/{{v._id}}">{{v.title}}</a>
+  </div>
+</div>

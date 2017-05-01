@@ -17,6 +17,7 @@
                   <div *ngFor="let v of videos">
                     <img [src]='v.thumb' width="75" height="75" /> <br>
                     <a routerLink="/video/{{v.id}}">{{v.title}}</a>
+                    <button class="btn btn-danger" (click)="deleteVideo(v.id)">Delete</button>
                   </div>
                 </div>
                 <ng-template #noVideos>

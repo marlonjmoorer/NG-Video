@@ -1,15 +1,14 @@
-const express= require("express")
-const router= express.Router();
-const userManagement = require('./userManagement.js');
-const fileManagment = require('./fileManagment.js');
+const express = require("express")
+const router = express.Router();
 
-const fileRoute = require('./fileRoute.js');
-const userRoute = require('./userRoute.js');
-const channelRoute = require('./channelRoute.js');
+const fileRoute = require('./fileRoute');
+const userRoute = require('./userRoute');
+const channelRoute = require('./channelRoute');
+const videoRoute = require("./videoRoute")
 
-router.use("/um",userManagement)  
-router.use("/fm",fileManagment)  
-router.use("/file",fileRoute)
-router.use("/user",userRoute)
-router.use("/channel",channelRoute)
-module.exports= router;
+
+router.use("/file", fileRoute)
+router.use("/user", userRoute)
+router.use("/channel", channelRoute)
+//router.use("/video", videoRoute)
+module.exports = router;

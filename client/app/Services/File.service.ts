@@ -3,35 +3,22 @@ import { Http, RequestOptions, Headers } from "@angular/http";
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
 import { NgForm } from "@angular/forms";
-import { io, on, ss, emit, ss_emit, } from "app/Services/Io.service";
+
 
 
 @Injectable()
-export class FileManagementService {
+export class FileService {
 
     constructor(private http: Http) { }
 
 
-    upload(file: File, channel_id: String, thumbnail: File) {
-        var fd = new FormData();
-        fd.append("file", file)
-        fd.append("channel_id", channel_id)
-        fd.append("file", thumbnail)
+    upload(fd: FormData) {
+        let body = { toke: localStorage.getItem("id_token") }
         return this.http.post("api/file/upload", fd).map((res) => {
             return res.json();
         })
+    }
 
-    }
-    upold(fileToUpload: any, meta) {
-        meta.token = localStorage.getItem("id_token")
-        var stream = ss.createStream();
-        ss_emit('upload', stream, meta);
-        on("attached").subscribe(() => {
-            console.log("attached")
-            ss.createBlobReadStream(fileToUpload).pipe(stream);
-        })
-        return on("finish")
-    }
     getRecentVideos() {
         return this.http.get("/api/file/videos/recent").map(res => {
             return res.json()
@@ -46,6 +33,15 @@ export class FileManagementService {
                 console.log(res)
                 return res.json()
             })
+    }
+    deleteVideo(id) {
+        var body = {
+            id: id,
+            token: localStorage.getItem("id_token")
+        }
+        return this.http.delete("/api/file/video/", { body: body }).map((res) => {
+            return res.json()
+        })
     }
 
 

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UserManagementService } from "app/Services/UserManagement.service";
+
 import { FormGroup, ReactiveFormsModule, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router } from "@angular/router";
 import { AbstractForm } from "app/Models/AbstractForm"
+import { UserService } from "app/Services/User.service";
 
 @Component({
   selector: 'app-Login',
@@ -16,7 +17,7 @@ export class LoginComponent extends AbstractForm implements OnInit {
     username: new FormControl("", [Validators.required, Validators.minLength(6)]),
     password: new FormControl("", [Validators.required, Validators.minLength(6)])
   });
-  constructor(private userService: UserManagementService, private fb: FormBuilder, private _router: Router) {
+  constructor(private userService: UserService, private fb: FormBuilder, private _router: Router) {
     super()
 
   }

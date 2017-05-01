@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { IoService, on } from "app/Services/Io.service";
-import { ContentType } from "app/Models/ContentType";
-import { FileManagementService } from "app/Services/FileManagement.service";
+import { IoService } from "app/Services/Io.service";
+import { ContentType } from "app/Models/ContentType"
+import { FileService } from "app/Services/File.service";
 import { Router, ActivatedRoute } from "@angular/router";
 
 
@@ -11,17 +11,20 @@ import { Router, ActivatedRoute } from "@angular/router";
   styleUrls: ['./Upload.component.css']
 })
 export class UploadComponent implements OnInit {
+  loading: boolean;
   id: any;
   type: string = ContentType[ContentType.video]
   file: File;
   thumbnail: File;
   url: String = ""
+  title: String;
   message: string;
-  constructor(private fm: FileManagementService, private zone: NgZone, private route: ActivatedRoute, private router: Router) {
-
+  constructor(private fm: FileService, private zone: NgZone, private route: ActivatedRoute, private router: Router) {
+    this.loading = false;
   }
 
   ngOnInit() {
+
     this.route
       .queryParams
       .subscribe(params => {
@@ -34,16 +37,17 @@ export class UploadComponent implements OnInit {
 
     if (this.file) {
       this.message = null;
-      var meta = {
-        name: this.file.name,
-        type: this.file.type,
-        size: this.file.size,
-        contentType: ContentType[this.type]
-      }
+      var fd = new FormData();
+      fd.append("title", this.title)
+      fd.append("channel_id", this.id)
+      fd.append("token", localStorage.getItem("id_token"))
+      fd.append("file", this.file)
+      fd.append("file", this.thumbnail)
       console.log(this.route)
-      this.fm.upload(this.file, this.id, this.thumbnail).subscribe((res) => {
+      this.standby();
+      this.fm.upload(fd).subscribe((res) => {
         console.log(res)
-        //this.router.navigateByUrl("/profile")
+        this.ready()
         if (res._id != null) {
           this.router.navigate(["/profile"]);
         }
@@ -67,12 +71,17 @@ export class UploadComponent implements OnInit {
         console.log(event)
         this.url = reader.result;
       }
-
       reader.readAsDataURL(e.target.files[0]);
     }
   }
   get hasUrl() {
     return this.url == ""
+  }
+  standby() {
+    this.loading = true;
+  }
+  ready() {
+    this.loading = false;
   }
 
 }

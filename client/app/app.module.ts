@@ -4,21 +4,23 @@ import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
-import { FileManagementService } from "app/Services/FileManagement.service";
 import { IoService } from "app/Services/Io.service";
 import { routes } from "app/app.routes";
-import { HomeComponent } from "app/Home/Home.component";
-import { LoginComponent } from './Login/Login.component';
-import { UserManagementService } from "app/Services/UserManagement.service";
-import { SignupComponent } from './Signup/Signup.component';
-import { RecentVideosComponent } from './RecentVideos/RecentVideos.component';
-import { PodcastListComponent } from './PodcastList/PodcastList.component';
-import { ProfileComponent } from './Profile/Profile.component';
-import { UnauthorizedComponent } from "app/Shared/Unauthorized/Unauthorized.component";
+import { LoginComponent } from "app/Components/Login/Login.component";
+import { SignupComponent } from "app/Components/Signup/Signup.component";
+import { HomeComponent } from "app/Components/Home/Home.component";
+import { RecentVideosComponent } from "app/Components/RecentVideos/RecentVideos.component";
+import { PodcastListComponent } from "app/Components/PodcastList/PodcastList.component";
+import { ProfileComponent } from "app/Components/Profile/Profile.component";
 import { AuthGuard } from "app/Services/AuthGuard.service";
-import { UploadComponent } from './Upload/Upload.component';
-import { VideoComponent } from './Video/Video.component';
-import { ChannelComponent } from './Channel/Channel.component';
+import { UnauthorizedComponent } from "app/Components/Shared/Unauthorized/Unauthorized.component";
+import { UploadComponent } from "app/Components/Upload/Upload.component";
+import { VideoComponent } from "app/Components/Video/Video.component";
+import { LoadingComponent } from "app/Components/Shared/Loading/Loading.component";
+import { ChannelComponent } from "app/Components/Channel/Channel.component";
+import { FileService } from "app/Services/File.service";
+import { UserService } from "app/Services/User.service";
+
 
 @NgModule({
   declarations: [
@@ -32,8 +34,9 @@ import { ChannelComponent } from './Channel/Channel.component';
     UnauthorizedComponent,
     UploadComponent,
     VideoComponent,
-    ChannelComponent
-],
+    ChannelComponent,
+    LoadingComponent
+  ],
   imports: [
     BrowserModule,
     FormsModule,
@@ -41,7 +44,13 @@ import { ChannelComponent } from './Channel/Channel.component';
     ReactiveFormsModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [FileManagementService, UserManagementService, FormBuilder, IoService, AuthGuard],
+  providers: [
+    FileService,
+    UserService,
+    FormBuilder,
+    IoService,
+    AuthGuard
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

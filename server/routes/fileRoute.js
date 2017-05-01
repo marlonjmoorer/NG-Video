@@ -23,42 +23,50 @@ var upload = multer({
         },
         acl: 'public-read',
         key: function (req, file, cb) {
+            var token = jwt.verify(req.body.token, config.secret);
+            if (!token) { throw new Error("Invalid User") }
             var type = ""
-            if (file.mimetype == "video/mp4")
+            if (file.mimetype.includes("video"))
                 type = "Vid"
-            if (file.mimetype == "image/png")
-                type = "thumb"
-            cb(null, `uploads/${guid.raw()}/${type}/${file.originalname}`)
+            if (file.mimetype.includes("image"))
+                type = "Thumbnail"
+            cb(null, `uploads/${req.body.title}_${token._doc._id}/${type}/${file.originalname}`)
         }
     })
 })
-
 router.post("/upload", upload.array('file', 2), (req, res) => {
-    if (req.files[0]) {
+    if (req.files && req.files[0]) {
         var file = req.files[0]
         var thumb = req.files[1]
-        s3.getObject({ Key: thumb.key, Bucket: config.bucket }, (err, data) => {
-            data.Body
-            var video = new models.Video({
-                title: "Test",
-                path: file.key,
-                size: file.size,
-                thumbnail: data.Body
-            })
-            video.save((err, v) => {
-                var id = req.body.channel_id;
-                models.Channel.findById(id).exec((err, ch) => {
-                    ch.videos.push({
-                        id: v._id,
-                        title: v.title,
-                        thumb: thumb.location
-                    })
-                    ch.save((err, c) => {
-                        res.json(c)
-                    })
-                })
-            })
+
+        var video = new models.Video({
+            title: req.body.title,
+            path: file.key,
+            size: file.size,
+            thumbnail: thumb.location
         })
+        let meta;
+        video.save()
+            .then((v) => {
+                meta = {
+                    id: v._id,
+                    title: v.title,
+                    thumb: thumb.location,
+                    key: thumb.key
+                }
+                var id = req.body.channel_id;
+                return models.Channel.findById(id).exec()
+            }).then((ch) => {
+                if (!meta) { throw new Error(" No Metadata") }
+                if (!ch) { throw new Error(" No Channel Found") }
+                ch.videos.push(meta)
+                return ch.save()
+            }).then((ch) => {
+                if (!ch) { throw new Error(" No Channel Found") }
+                return res.json(ch)
+            }).catch((err) => {
+                console.log(err)
+            })
     } else {
         res.json({ message: "upload failed" })
     }
@@ -66,12 +74,16 @@ router.post("/upload", upload.array('file', 2), (req, res) => {
 
 router.get("/watch/:id", (req, res) => {
     var id = ObjectId(req.params.id)
-    models.Video.findById(req.params.id).exec((err, v) => {
-        const stream = s3.getObject({ Key: v.path, Bucket: config.bucket }).createReadStream()
-        stream.on('error', function (err) {
-            console.log(err);
-        }).pipe(res);
-    })
+    models.Video.findById(req.params.id)
+        .exec()
+        .then((vid) => {
+            s3.getObject({ Key: vid.path, Bucket: config.bucket })
+                .createReadStream().on("error", (err) => {
+                    throw err
+                }).pipe(res)
+        }).catch((err) => {
+            console.log(err)
+        })
 })
 
 router.get("/videos/recent", (req, res) => {
@@ -79,6 +91,51 @@ router.get("/videos/recent", (req, res) => {
     models.Video.find({}).exec((err, v) => {
         res.json(v);
     })
+})
+
+router.delete("/video", (req, res) => {
+    var thumbnail_key;
+    var token = jwt.verify(req.body.token, secret)
+    if (token) {
+        var userId = ObjectId(token._doc._id)
+        models.Channel.findOne({ user: userId })
+            .exec()
+            .then((ch) => {
+                let vids = ch.videos;
+                thumbnail_key = vids.filter((v) => v.id.equals(ObjectId(req.body.id)))[0].key
+                return models.Channel.update({ user: userId }, { $pull: { videos: { id: ObjectId(req.body.id) } } }).exec()
+            }).then((result) => {
+                if (result.nModified == 1 && result.ok == 1) {
+                    //res.json({ succes: true, message: "Video Removed" });
+                    return models.Video.findOne({ _id: req.body.id }).exec()
+                }
+            }).then((v) => {
+                var params = {
+                    Bucket: config.bucket,
+                    Delete: {
+                        Objects: [
+                            { Key: v.path },
+                            { Key: thumbnail_key }
+                        ]
+                    }
+                }
+                return s3.deleteObjects(params).promise()
+            }).then((result) => {
+                if (!result.Deleted) {
+                    return new Error("Failed to delete object")
+                }
+                return models.Video.findOneAndRemove({ _id: req.body.id }).exec()
+            }).then((result) => {
+                if (result) {
+                    res.json({ success: true, message: "Video Removed" });
+                } else {
+                    res.json({ success: false, message: "Video Not Found" })
+                }
+            }).catch((err) => {
+                res.json({ succes: false, error: err })
+            })
+
+    }
 })
 
 

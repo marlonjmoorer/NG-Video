@@ -1,9 +1,9 @@
 import { Component, ViewChild, OnInit, NgZone } from '@angular/core';
-import { FileManagementService } from "app/Services/FileManagement.service";
 import { NgForm } from "@angular/forms";
 import 'rxjs/Rx';
-import { IoService, emit, on } from "app/Services/Io.service";
-import { UserManagementService } from "app/Services/UserManagement.service";
+import { IoService } from "app/Services/Io.service";
+import { UserService } from "app/Services/User.service";
+
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
 
   }
-  constructor(private auth: UserManagementService) {
+  constructor(private auth: UserService) {
 
   }
 

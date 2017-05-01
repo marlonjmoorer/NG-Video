@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormControl } from "@angular/forms";
-import { AbstractForm } from "app/Models/AbstractForm";
-import { UserManagementService } from "app/Services/UserManagement.service";
+
+
 import { Router } from "@angular/router";
+import { AbstractForm } from "app/Components/Models/AbstractForm";
+import { UserService } from "app/Services/User.service";
 
 @Component({
   selector: 'app-Signup',
@@ -17,7 +19,7 @@ export class SignupComponent extends AbstractForm implements OnInit {
     email: new FormControl("", [Validators.required, Validators.email]),
     password: new FormControl("", [Validators.required, Validators.minLength(6)])
   });
-  constructor(private userService: UserManagementService, private router: Router, private fb: FormBuilder) {
+  constructor(private userService: UserService, private router: Router, private fb: FormBuilder) {
     super();
   }
 

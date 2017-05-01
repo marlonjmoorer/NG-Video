@@ -2,12 +2,12 @@ const express = require("express")
 const app = express()
 const port = 8800
 const bodyParser = require('body-parser');
-var http = require('http').Server(app);
-global.io = require('socket.io')(http);
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const router = require("./routes")
 const path = require("path")
 const az = require("./aws_mod")
-
+const socketServer = require("./socket");
 
 
 
@@ -17,21 +17,14 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use("/api", router)
 app.set("port", port)
 
-app.get('/test', (req, res) => {
-
-  var name = "test.txt"
-  az.upload("test2.txt")
-  az.getFile(name, (data) => {
-    var buff = data
-    res.dow
-  });
-
-  //let f= path.join(__dirname, '../dist/index.html')
+app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
-app.get('*', (req, res) => {
-  //let f= path.join(__dirname, '../dist/index.html')
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
-http.listen(port, () => console.log(`Listening on port ${port}`))
+http.listen(port, () => {
+  socketServer.start(io);
+  console.log(`Listening on port ${port}`)
+})
 

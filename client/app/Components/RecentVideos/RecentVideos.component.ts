@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FileManagementService } from "app/Services/FileManagement.service";
+import { FileService } from "app/Services/File.service";
 
 @Component({
   selector: 'app-RecentVideos',
@@ -9,7 +9,7 @@ import { FileManagementService } from "app/Services/FileManagement.service";
 export class RecentVideosComponent implements OnInit {
 
   recentVideos = []
-  constructor(private fm: FileManagementService) {
+  constructor(private fm: FileService) {
 
   }
 

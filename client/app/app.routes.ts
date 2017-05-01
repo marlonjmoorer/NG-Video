@@ -1,13 +1,14 @@
 import { Routes } from "@angular/router/src";
-import { HomeComponent } from "app/Home/Home.component";
-import { LoginComponent } from "app/Login/Login.component";
-import { SignupComponent } from "app/Signup/Signup.component";
-import { ProfileComponent } from "app/Profile/Profile.component";
+
 import { AuthGuard } from "app/Services/AuthGuard.service";
-import { UnauthorizedComponent } from "app/Shared/Unauthorized/Unauthorized.component";
-import { UploadComponent } from "app/Upload/Upload.component";
-import { VideoComponent } from "app/Video/Video.component";
-import { ChannelComponent } from "app/Channel/Channel.component";
+import { HomeComponent } from "app/Components/Home/Home.component";
+import { LoginComponent } from "app/Components/Login/Login.component";
+import { SignupComponent } from "app/Components/Signup/Signup.component";
+import { ChannelComponent } from "app/Components/Channel/Channel.component";
+import { UploadComponent } from "app/Components/Upload/Upload.component";
+import { ProfileComponent } from "app/Components/Profile/Profile.component";
+import { UnauthorizedComponent } from "app/Components/Shared/Unauthorized/Unauthorized.component";
+import { VideoComponent } from "app/Components/Video/Video.component";
 
 export const routes: Routes = [
   {

@@ -35,7 +35,7 @@ module.exports = {
         size: String,
         path: String,
         keywords: [String],
-        thumbnail: Buffer
+        thumbnail: String
     })),
     Channel: mongoose.model("channel", new Schema({
         user: { type: ObjectId, ref: 'user' },
